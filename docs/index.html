@@ -118,12 +118,13 @@
 
       <section>
         <h2>The AI agent in this project</h2>
-        <p class="muted">The agent is not just a single chat prompt. It uses state, chooses a workflow path, works with source context, and changes its plan after human feedback.</p>
+        <p class="muted"><strong>Current architecture: one AI agent, not a multi-agent system.</strong> The agent is not just a single chat prompt: it uses state, chooses a workflow path, works with source context, and changes its plan after human feedback. The LangGraph nodes below are steps performed by the same agent, not independent agents.</p>
         <div class="grid">
           <article class="card"><div class="number">1</div><h3>It decides the next step</h3><p>The LangGraph <code>decide</code> node inspects the current state. Very short or vague questions go to a clarification response; normal questions go to research; feedback on an existing plan goes to revision.</p></article>
           <article class="card"><div class="number">2</div><h3>It uses tools and context</h3><p>The agent works with loaded webpage text, uploaded PDFs, notes, a text splitter, prompt templates, and the hosted Qwen model. These tools help it create a grounded answer instead of answering from a blank chat window.</p></article>
           <article class="card"><div class="number">3</div><h3>It keeps a useful state</h3><p>State holds the question, prepared context, summary, task plan, and revision request. This lets the agent revise the same plan rather than starting again when the user says their available time has changed.</p></article>
         </div>
+        <div class="card" style="margin-top:18px"><h3>All agent components in the current code</h3><p><strong>One Research &amp; Task Agent</strong> is compiled as <code>research_agent</code>. Its workflow steps are <code>decide</code>, <code>clarify</code>, <code>prepare_context</code>, <code>research_and_plan</code>, and <code>revise</code>. The <code>ChatGroq</code> Qwen model is the agent’s language model, not a second agent. The URL/PDF loader, SQLite storage, and LangSmith tracing are tools and observability components, not agents.</p></div>
       </section>
 
       <section>
