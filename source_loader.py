@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from pypdf.errors import DependencyError, FileNotDecryptedError
 from pypdf import PdfReader
 
 
@@ -31,8 +32,17 @@ def load_upload(upload) -> tuple[str, str]:
     name = upload.name
     raw = upload.getvalue()
     if name.lower().endswith(".pdf"):
-        reader = PdfReader(BytesIO(raw))
-        text = "\n".join(page.extract_text() or "" for page in reader.pages)
+        try:
+            reader = PdfReader(BytesIO(raw))
+            if reader.is_encrypted:
+                raise ValueError(f"{name} is password-protected. Upload an unlocked copy to use it as a source.")
+            text = "\n".join(page.extract_text() or "" for page in reader.pages)
+        except DependencyError as error:
+            raise ValueError(
+                f"{name} uses PDF encryption that needs the cryptography package. Please restart the app after updating dependencies."
+            ) from error
+        except FileNotDecryptedError as error:
+            raise ValueError(f"{name} is password-protected. Upload an unlocked copy to use it as a source.") from error
     else:
         text = raw.decode("utf-8", errors="replace")
     text = text.strip()

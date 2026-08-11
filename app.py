@@ -55,7 +55,7 @@ if st.button("Create my research plan", type="primary", use_container_width=True
                 sources.append(load_upload(upload))
             if sources:
                 combined_notes = "\n\n".join(f"[Source: {name}]\n{text}" for name, text in sources)
-        except ValueError as error:
+        except Exception as error:
             st.error(f"Source issue: {error}")
             st.stop()
         try:
