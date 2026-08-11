@@ -1,0 +1,12 @@
+[
+  {
+    "question": "How can I learn Python in one week?",
+    "source_notes": "[Source: Study notes] Practice daily by writing small programs.",
+    "must_contain": ["practice"]
+  },
+  {
+    "question": "How can I prepare for a job interview?",
+    "source_notes": "[Source: Career notes] Prepare examples using the STAR method and research the company.",
+    "must_contain": ["STAR"]
+  }
+]
