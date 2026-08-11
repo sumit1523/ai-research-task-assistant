@@ -75,6 +75,10 @@ LANGSMITH_PROJECT=ai-research-task-assistant
 
 After a successful app request, inspect the project in LangSmith to see the Coordinator route and the Researcher, Critic, and Planner calls.
 
+### Current local verification
+
+LangSmith tracing has been verified for the local development environment. The `ai-research-task-assistant` project contains multi-agent traces that include the Coordinator route and nested Researcher, Critic, and Planner model calls. The API key remains only in the ignored local `.env` file and is never committed.
+
 ## Test the agent workflow
 
 ```bash
