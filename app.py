@@ -8,31 +8,40 @@ from storage import initialise_database, recent_sessions, save_session, set_task
 st.set_page_config(page_title="Research & Task Assistant", page_icon="🔎", layout="wide")
 initialise_database()
 
-st.markdown(
-    """
-    <style>
-      .stApp { background: #f7f8fc; }
-      .block-container { max-width: 1180px; padding-top: 2.2rem; padding-bottom: 4rem; }
-      h1 { letter-spacing: -0.045em; }
-      .hero { background: linear-gradient(125deg, #172033, #253e88); color: #fff; padding: 2.2rem; border-radius: 22px; margin-bottom: 1.35rem; }
-      .hero h1 { color: #fff; margin: 0 0 .45rem; font-size: 2.55rem; }
-      .hero p { color: #dce6ff; margin: 0; font-size: 1.06rem; }
-      .agent-row { display: flex; flex-wrap: wrap; gap: .65rem; margin: 1rem 0; }
-      .agent-chip { border: 1px solid #ccd6f7; background: #fff; color: #27375f; padding: .55rem .8rem; border-radius: 999px; font-weight: 650; font-size: .9rem; }
-      .agent-chip span { color: #65728b; font-weight: 500; }
-      [data-testid="stSidebar"] { background: #fff; border-right: 1px solid #e5e9f2; }
-      [data-testid="stMetric"] { background: #fff; border: 1px solid #e2e7f1; border-radius: 14px; padding: .65rem; }
-      .stButton > button { border-radius: 10px; font-weight: 700; }
-    </style>
-    <div class="hero">
-      <h1>Research with a small AI team.</h1>
-      <p>Give the team a question and trusted sources. A Researcher investigates, a Critic checks the findings, and a Planner creates an achievable action plan.</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+def apply_theme(dark_mode: bool) -> None:
+    colors = (
+        {"bg": "#111827", "panel": "#1f2937", "text": "#f8fafc", "muted": "#cbd5e1", "line": "#374151", "accent": "#8b9cff"}
+        if dark_mode
+        else {"bg": "#f7f8fc", "panel": "#ffffff", "text": "#172033", "muted": "#62708a", "line": "#dfe5ef", "accent": "#355bd8"}
+    )
+    st.markdown(
+        f"""
+        <style>
+          [data-testid="stAppViewContainer"] {{ background: {colors['bg']}; }}
+          [data-testid="stHeader"] {{ background: transparent; }}
+          .main .block-container {{ max-width: 1160px !important; width: 100% !important; padding: 2rem 2rem 4rem !important; }}
+          [data-testid="stSidebar"] {{ background: {colors['panel']}; border-right: 1px solid {colors['line']}; }}
+          [data-testid="stSidebar"] * {{ color: {colors['text']}; }}
+          h1, h2, h3, p, label, [data-testid="stMarkdownContainer"] {{ color: {colors['text']}; }}
+          [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * {{ color: {colors['muted']} !important; }}
+          [data-testid="stMetric"] {{ background: {colors['panel']}; border: 1px solid {colors['line']}; border-radius: 14px; padding: .7rem; }}
+          [data-testid="stMetric"] * {{ color: {colors['text']}; }}
+          [data-testid="stVerticalBlockBorderWrapper"] {{ background: {colors['panel']}; border-color: {colors['line']}; border-radius: 16px; }}
+          .stTextInput input, .stTextArea textarea {{ background: {colors['panel']}; color: {colors['text']}; border-color: {colors['line']}; }}
+          .stTextInput input::placeholder, .stTextArea textarea::placeholder {{ color: {colors['muted']}; }}
+          button {{ border-radius: 10px !important; font-weight: 700 !important; }}
+          [data-baseweb="tab-list"] {{ gap: .4rem; }}
+          [data-baseweb="tab"] {{ border-radius: 9px; padding: .45rem .8rem; color: {colors['muted']}; }}
+          [aria-selected="true"] {{ background: {colors['panel']}; color: {colors['accent']} !important; }}
+          @media (max-width: 700px) {{ .main .block-container {{ padding: 1.2rem 1rem 3rem !important; }} }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 with st.sidebar:
+    dark_mode = st.toggle("🌙 Dark mode", key="dark_mode_toggle")
+    st.divider()
     st.header("Your AI team")
     st.markdown("🔎 **Researcher**\nBuilds an evidence-aware brief.\n\n🛡️ **Critic**\nChecks gaps and unsupported claims.\n\n🗓️ **Planner**\nCreates and revises the task plan.")
     st.divider()
@@ -43,23 +52,24 @@ with st.sidebar:
     for question, created_at in recent_sessions():
         st.caption(f"{created_at[:16]} — {question[:45]}")
 
-st.markdown(
-    """<div class="agent-row">
-      <div class="agent-chip">1. Researcher <span>finds the useful context</span></div>
-      <div class="agent-chip">2. Critic <span>reviews quality and gaps</span></div>
-      <div class="agent-chip">3. Planner <span>turns findings into tasks</span></div>
-    </div>""",
-    unsafe_allow_html=True,
-)
+apply_theme(dark_mode)
+st.title("Research & Task Assistant")
+st.caption("A simple workspace where a Researcher, Critic, and Planner turn sources into an actionable plan.")
+agent_one, agent_two, agent_three = st.columns(3)
+agent_one.metric("🔎 Researcher", "Find evidence")
+agent_two.metric("🛡️ Critic", "Check quality")
+agent_three.metric("🗓️ Planner", "Make a plan")
+st.write("")
 
 with st.container(border=True):
-    st.subheader("Start a research session")
+    st.subheader("What do you want to work on?")
+    st.caption("Start with a question. Add sources only when you have useful context to share.")
     question = st.text_input(
         "What would you like to research?",
         placeholder="Example: How can I learn Docker in two weeks?",
     )
     source_notes = st.text_area(
-        "Paste notes or trusted text (optional)",
+        "Notes or trusted text (optional)",
         placeholder="Paste article notes, meeting notes, or course material. The team will use it as evidence.",
         height=145,
     )
@@ -73,7 +83,7 @@ with st.container(border=True):
             "Research files (optional)", type=["pdf", "txt", "md"], accept_multiple_files=True
         )
 
-if st.button("Ask my AI team", type="primary", use_container_width=True):
+if st.button("Create my research plan", type="primary", use_container_width=True):
     if not question.strip():
         st.warning("Please enter a research question first.")
     else:
