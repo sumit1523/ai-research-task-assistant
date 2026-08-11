@@ -100,6 +100,16 @@
       </section>
 
       <section>
+        <h2>The AI agent in this project</h2>
+        <p class="muted">The agent is not just a single chat prompt. It uses state, chooses a workflow path, works with source context, and changes its plan after human feedback.</p>
+        <div class="grid">
+          <article class="card"><div class="number">1</div><h3>It decides the next step</h3><p>The LangGraph <code>decide</code> node inspects the current state. Very short or vague questions go to a clarification response; normal questions go to research; feedback on an existing plan goes to revision.</p></article>
+          <article class="card"><div class="number">2</div><h3>It uses tools and context</h3><p>The agent works with loaded webpage text, uploaded PDFs, notes, a text splitter, prompt templates, and the hosted Qwen model. These tools help it create a grounded answer instead of answering from a blank chat window.</p></article>
+          <article class="card"><div class="number">3</div><h3>It keeps a useful state</h3><p>State holds the question, prepared context, summary, task plan, and revision request. This lets the agent revise the same plan rather than starting again when the user says their available time has changed.</p></article>
+        </div>
+      </section>
+
+      <section>
         <h2>Source ingestion and grounding</h2>
         <div class="grid two">
           <article class="card"><h3>Web pages</h3><p>The app fetches public HTTP(S) links, removes navigation, scripts, and styling noise, then retains readable text. It rejects local URLs.</p></article>
