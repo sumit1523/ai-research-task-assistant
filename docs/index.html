@@ -43,6 +43,11 @@
       code { background:#eef1f7; border-radius:5px; padding:2px 5px; color:#263758; }
       .callout code { background:#2a3857; color:#fff; }
       ul { padding-left:20px; } li { margin:7px 0; }
+      .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:14px; background:#fff; }
+      table { width:100%; border-collapse:collapse; min-width:640px; }
+      th, td { padding:14px 16px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
+      th { background:#f2f5fb; font-size:.88rem; letter-spacing:.02em; }
+      tr:last-child td { border-bottom:0; }
       .muted { color:var(--muted); }
       footer { border-top:1px solid var(--line); padding:30px 0 50px; color:var(--muted); font-size:.92rem; }
       @media (max-width:800px) { .grid, .grid.two { grid-template-columns:1fr; } .flow { grid-template-columns:1fr; } .step:not(:last-child)::after { content:"↓"; right:auto; left:50%; top:auto; bottom:-21px; } .hero { padding:45px 0 55px; } }
@@ -90,6 +95,18 @@
       </section>
 
       <section>
+        <h2>Detailed request lifecycle</h2>
+        <div class="grid two">
+          <article class="card"><h3>1. Validate the input</h3><p>The interface requires a research question. It accepts optional pasted notes, public web URLs, and multiple uploaded files. Empty questions are stopped before any model call.</p></article>
+          <article class="card"><h3>2. Ingest and label sources</h3><p>Each source becomes a pair of name and text. The app combines them as <code>[Source: name]</code> blocks so the model can identify where its context came from.</p></article>
+          <article class="card"><h3>3. Build graph state</h3><p>The initial state contains the question and combined source text. A revision run instead carries the original question, previous summary, previous task plan, and the user’s requested change.</p></article>
+          <article class="card"><h3>4. Route the agent</h3><p>The graph begins at <code>START</code> and always runs <code>decide</code>. It then follows one conditional edge: clarification, research, or revision. Each path ends cleanly at <code>END</code>.</p></article>
+          <article class="card"><h3>5. Generate structured sections</h3><p>The model is asked to return a <code>SUMMARY</code> followed by a <code>TASK PLAN</code>. The app separates those headings into the two columns users see.</p></article>
+          <article class="card"><h3>6. Save and track action</h3><p>The result is saved as a session. Numbered plan lines become task records, which power the local progress checkboxes and completion bar.</p></article>
+        </div>
+      </section>
+
+      <section>
         <h2>Where each AI concept is used</h2>
         <div class="grid two">
           <article class="card"><h3>LangChain: the AI building blocks</h3><p><code>ChatPromptTemplate</code> defines the research and revision prompts. <code>RecursiveCharacterTextSplitter</code> breaks large source text into manageable chunks. <code>ChatGroq</code> calls the hosted Qwen model and returns the summary and timed plan.</p></article>
@@ -110,12 +127,39 @@
       </section>
 
       <section>
+        <h2>Agent state and decision contract</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>State field</th><th>Why it exists</th><th>Where it is used</th></tr></thead>
+            <tbody>
+              <tr><td><code>question</code></td><td>The research goal supplied by the user.</td><td>Used by every model prompt and by the decision node.</td></tr>
+              <tr><td><code>source_notes</code></td><td>Combined labelled text from notes, URLs, and uploaded files.</td><td>Split in <code>prepare_context</code> before research generation.</td></tr>
+              <tr><td><code>context</code></td><td>Focused source excerpts for the LLM.</td><td>Passed to the research prompt with the user question.</td></tr>
+              <tr><td><code>route</code></td><td>The current decision: clarification, research, or revision.</td><td>Read by the LangGraph conditional edge function.</td></tr>
+              <tr><td><code>summary</code> and <code>tasks</code></td><td>The last useful output of the agent.</td><td>Displayed in Streamlit, saved to SQLite, and reused for revisions.</td></tr>
+              <tr><td><code>revision_request</code></td><td>User feedback such as time, difficulty, or priority constraints.</td><td>Causes the agent to route to the human-in-the-loop <code>revise</code> node.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
         <h2>Source ingestion and grounding</h2>
         <div class="grid two">
           <article class="card"><h3>Web pages</h3><p>The app fetches public HTTP(S) links, removes navigation, scripts, and styling noise, then retains readable text. It rejects local URLs.</p></article>
           <article class="card"><h3>Uploaded files</h3><p>PDF, TXT, and Markdown files are read in memory; they are not copied to a cloud storage bucket. AES-PDF support is included, and password-protected files return a friendly message.</p></article>
           <article class="card"><h3>Context preparation</h3><p>Source text is split into overlapping chunks before reaching the model. This is a lightweight RAG-style foundation that keeps the prompt focused and is easy to understand.</p></article>
           <article class="card"><h3>Grounded output</h3><p>The research prompt asks the model to rely on provided context for factual claims and to label no-source answers as general guidance.</p></article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Model and prompt behavior</h2>
+        <div class="grid two">
+          <article class="card"><h3>Hosted free-tier model</h3><p>The app calls Groq’s hosted <code>qwen/qwen3.6-27b</code> through the LangChain <code>ChatGroq</code> integration. No multi-gigabyte model is installed locally. A Groq API key is required, and the account’s free-tier limits apply.</p></article>
+          <article class="card"><h3>Output settings</h3><p>The model uses a low temperature of <code>0.2</code> for more consistent plans and a maximum of <code>700</code> output tokens. Reasoning is disabled and hidden, so users receive a direct answer rather than internal reasoning text.</p></article>
+          <article class="card"><h3>Research prompt guardrail</h3><p>When sources exist, the prompt says to use them for factual claims. Without sources, it instructs the model to label its answer as general guidance. This is a practical grounding guardrail, not a guarantee of factual accuracy.</p></article>
+          <article class="card"><h3>Revision prompt</h3><p>The revision node receives the current summary and task plan with the feedback. It creates a replacement plan; it does not silently mutate existing tasks or take actions outside the app.</p></article>
         </div>
       </section>
 
@@ -135,6 +179,43 @@
           <p><strong>Evaluation tests:</strong> <code>evaluate.py</code> sends stable example questions through the agent and checks that a summary, task plan, and expected source concept are present.</p>
           <p><strong>Workflow tests:</strong> the app has been exercised through initial research, the LangGraph revision branch, persistent task completion, PDF handling, and Streamlit UI tests.</p>
           <p><strong>LangSmith test:</strong> with a valid LangSmith API key, send one request and inspect the <code>ai-research-task-assistant</code> project to view the nested graph and model trace.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Testing and verification matrix</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Area</th><th>What is checked</th><th>Evidence of success</th></tr></thead>
+            <tbody>
+              <tr><td>LangChain pipeline</td><td>Prompt, context splitting, Groq call, and response parsing.</td><td>A non-empty summary and task plan are generated.</td></tr>
+              <tr><td>LangGraph workflow</td><td>Research and revision graph paths.</td><td>Initial research and feedback-driven revision calls both complete.</td></tr>
+              <tr><td>Evaluation dataset</td><td>Two stable example questions in <code>evaluation_examples.json</code>.</td><td><code>evaluate.py</code> checks required sections and expected source concepts.</td></tr>
+              <tr><td>Streamlit interface</td><td>Question submission, cloud response, and task checkboxes.</td><td>The UI test completes with no displayed error or exception.</td></tr>
+              <tr><td>SQLite persistence</td><td>Generated numbered items become task records and completion status updates.</td><td>Saved task items can be retrieved and marked complete.</td></tr>
+              <tr><td>PDF support</td><td>PDF text extraction and AES crypto dependency availability.</td><td>Readable PDFs load; protected files return a clear user message.</td></tr>
+              <tr><td>LangSmith observability</td><td>Tracing is optional and needs a valid LangSmith key.</td><td>A successful run appears under the configured LangSmith project with nested graph and LLM spans.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>Configuration, deployment, and limits</h2>
+        <div class="grid two">
+          <article class="card"><h3>Required configuration</h3><p><code>GROQ_API_KEY</code> authenticates hosted model calls. The optional <code>GROQ_MODEL</code> selects the model. Keys are loaded from <code>.env</code> and the example file documents the variable names without including secrets.</p></article>
+          <article class="card"><h3>Optional LangSmith configuration</h3><p>Set <code>LANGSMITH_TRACING=true</code>, <code>LANGSMITH_API_KEY</code>, and a project name to observe the same LangChain and LangGraph calls in LangSmith. A key must be valid for the configured LangSmith region.</p></article>
+          <article class="card"><h3>GitHub Pages guide</h3><p>This documentation site is static HTML in <code>docs/</code>, published from the <code>main</code> branch’s <code>/docs</code> folder. It needs no JavaScript build process and links back to the public repository.</p></article>
+          <article class="card"><h3>Current limitations</h3><p>The context stage takes the first six chunks rather than semantic vector retrieval; generated tasks have no due dates; remote pages can change after they are loaded; and a cloud LLM can still make mistakes. These are intentional MVP tradeoffs to keep the code understandable.</p></article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Next development steps</h2>
+        <div class="grid">
+          <article class="card"><h3>True RAG retrieval</h3><p>Add embeddings and a local vector store so the app retrieves the most relevant chunks rather than the first six source chunks.</p></article>
+          <article class="card"><h3>Quality controls</h3><p>Add source-level citations, a critic pass for unsupported claims, and more varied LangSmith evaluation examples.</p></article>
+          <article class="card"><h3>Planning features</h3><p>Add task due dates, priority, search across saved sessions, and optional calendar integration after explicit user approval.</p></article>
         </div>
       </section>
 
