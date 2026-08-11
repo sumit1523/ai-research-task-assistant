@@ -3,7 +3,7 @@ import os
 
 from assistant_graph import research_agent
 from source_loader import load_upload, load_url
-from storage import initialise_database, recent_sessions, save_session
+from storage import initialise_database, recent_sessions, save_session, set_task_completed, task_items
 
 st.set_page_config(page_title="Research & Task Assistant", page_icon="🔎", layout="wide")
 initialise_database()
@@ -72,11 +72,12 @@ if st.button("Create my research plan", type="primary", use_container_width=True
                     st.subheader("Your task plan")
                     st.markdown(result["tasks"])
                 st.caption("Sources used: " + (", ".join(name for name, _ in sources) if sources else "general guidance"))
-                save_session(question, result["summary"], result["tasks"])
+                session_id = save_session(question, result["summary"], result["tasks"])
                 st.session_state.current_research = {
                     "question": question,
                     "summary": result["summary"],
                     "tasks": result["tasks"],
+                    "session_id": session_id,
                 }
                 st.success("Saved locally to your project history.")
         except Exception as error:
@@ -84,6 +85,17 @@ if st.button("Create my research plan", type="primary", use_container_width=True
             st.caption(f"Details: {error}")
 
 if current := st.session_state.get("current_research"):
+    st.divider()
+    st.subheader("Track your progress")
+    items = task_items(current["session_id"])
+    for task_id, task_text, completed in items:
+        is_complete = st.checkbox(task_text, value=completed, key=f"task_{task_id}")
+        if is_complete != completed:
+            set_task_completed(task_id, is_complete)
+    if items:
+        complete_count = sum(completed for _, _, completed in items)
+        st.progress(complete_count / len(items), text=f"{complete_count} of {len(items)} tasks completed")
+
     st.divider()
     st.subheader("Revise this plan")
     feedback = st.text_input("What should change?", placeholder="Example: I have only 30 minutes a day.")
@@ -101,7 +113,7 @@ if current := st.session_state.get("current_research"):
                     }
                 )
             current.update(summary=revised["summary"], tasks=revised["tasks"])
-            save_session(current["question"], revised["summary"], revised["tasks"])
+            current["session_id"] = save_session(current["question"], revised["summary"], revised["tasks"])
             st.success("Your revised plan is ready.")
             st.markdown(revised["summary"])
             st.markdown(revised["tasks"])
