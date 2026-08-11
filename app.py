@@ -55,6 +55,10 @@ if st.button("Create my research plan", type="primary", use_container_width=True
                 sources.append(load_upload(upload))
             if sources:
                 combined_notes = "\n\n".join(f"[Source: {name}]\n{text}" for name, text in sources)
+        except ValueError as error:
+            st.error(f"Source issue: {error}")
+            st.stop()
+        try:
             with st.spinner("The agent is researching and creating your plan..."):
                 result = research_agent.invoke({"question": question, "source_notes": combined_notes})
             if result.get("clarification"):
@@ -76,8 +80,8 @@ if st.button("Create my research plan", type="primary", use_container_width=True
                 }
                 st.success("Saved locally to your project history.")
         except Exception as error:
-            st.error("I could not reach the cloud AI model. Check that GROQ_API_KEY is set and try again.")
-            st.caption(f"Technical detail: {error}")
+            st.error("The cloud model could not complete this request.")
+            st.caption(f"Details: {error}")
 
 if current := st.session_state.get("current_research"):
     st.divider()
