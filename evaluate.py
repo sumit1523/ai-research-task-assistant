@@ -18,8 +18,11 @@ def main() -> None:
         )
         text = f"{result.get('summary', '')}\n{result.get('tasks', '')}".lower()
         has_plan = bool(result.get("summary")) and bool(result.get("tasks"))
+        completed_handoff = all(
+            result.get(field) for field in ("research_brief", "critique", "critique_decision")
+        )
         uses_expected_concept = all(term.lower() in text for term in example["must_contain"])
-        ok = has_plan and uses_expected_concept
+        ok = has_plan and completed_handoff and uses_expected_concept
         passed += ok
         print(f"{'PASS' if ok else 'FAIL'} — {example['question']}")
     print(f"\n{passed}/{len(examples)} examples passed")

@@ -3,235 +3,52 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Architecture and usage guide for the AI Research and Task Assistant." />
-    <title>AI Research &amp; Task Assistant</title>
+    <meta name="description" content="Complete technical guide for the multi-agent AI Research and Task Assistant." />
+    <title>AI Research &amp; Task Assistant | Multi-Agent Guide</title>
     <style>
-      :root { --ink:#172033; --muted:#5a667a; --paper:#f7f8fc; --card:#fff; --line:#dde2ed; --blue:#3159d9; --teal:#027a78; --violet:#6e42c1; }
-      * { box-sizing:border-box; }
-      html { scroll-behavior:smooth; }
-      body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.65 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-      a { color:var(--blue); font-weight:650; }
-      .wrap { width:min(1120px, calc(100% - 40px)); margin:auto; }
-      nav { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:20px 0; }
-      nav .brand { color:var(--ink); font-weight:800; text-decoration:none; }
-      .repo { border:1px solid var(--line); border-radius:10px; padding:8px 13px; text-decoration:none; background:#fff; }
-      header { background:radial-gradient(circle at 72% 10%, #dce6ff 0, transparent 37%), #f7f8fc; border-bottom:1px solid var(--line); }
-      .hero { padding:70px 0 80px; max-width:820px; }
-      .tag { display:inline-block; border-radius:999px; padding:5px 11px; background:#e7edff; color:#2947aa; font-size:.85rem; font-weight:750; letter-spacing:.03em; }
-      h1 { font-size:clamp(2.35rem, 6vw, 4.75rem); line-height:1.03; letter-spacing:-.055em; margin:18px 0; }
-      h2 { font-size:clamp(1.6rem, 3vw, 2.35rem); letter-spacing:-.035em; line-height:1.15; margin:0 0 14px; }
-      h3 { margin:0 0 8px; font-size:1.08rem; }
-      .lead { font-size:1.2rem; color:var(--muted); max-width:710px; }
-      .buttons { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
-      .button { display:inline-block; border-radius:10px; padding:11px 16px; text-decoration:none; background:var(--blue); color:white; font-weight:750; }
-      .button.secondary { background:white; color:var(--ink); border:1px solid var(--line); }
-      main { padding:70px 0; }
-      section { margin:0 0 76px; }
-      .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
-      .grid.two { grid-template-columns:repeat(2, 1fr); }
-      .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px; box-shadow:0 8px 24px rgb(30 45 75 / 4%); }
-      .number { width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:#e9efff; color:#2947aa; font-weight:800; margin-bottom:12px; }
-      .flow { display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; align-items:stretch; margin-top:25px; }
-      .flow-card { background:#fff; border:1px solid var(--line); border-radius:13px; padding:16px 13px; text-align:center; font-size:.93rem; font-weight:700; }
-      .flow-card span { display:block; color:var(--muted); font-size:.8rem; font-weight:500; margin-top:5px; }
-      .flow-card:nth-child(2) { border-color:#9bb7ff; } .flow-card:nth-child(3) { border-color:#80d1c8; } .flow-card:nth-child(4) { border-color:#c8a9fa; }
-      .step { position:relative; }
-      .step:not(:last-child)::after { content:"→"; position:absolute; right:-17px; top:38%; font-size:1.25rem; color:#98a3b7; z-index:2; }
-      .callout { background:#172033; color:#edf1ff; border-radius:18px; padding:30px; }
-      .callout h2 { color:white; }
-      .callout p { color:#d1d9ef; }
-      code { background:#eef1f7; border-radius:5px; padding:2px 5px; color:#263758; }
-      .callout code { background:#2a3857; color:#fff; }
-      ul { padding-left:20px; } li { margin:7px 0; }
-      .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:14px; background:#fff; }
-      table { width:100%; border-collapse:collapse; min-width:640px; }
-      th, td { padding:14px 16px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
-      th { background:#f2f5fb; font-size:.88rem; letter-spacing:.02em; }
-      tr:last-child td { border-bottom:0; }
-      .muted { color:var(--muted); }
-      footer { border-top:1px solid var(--line); padding:30px 0 50px; color:var(--muted); font-size:.92rem; }
-      @media (max-width:800px) { .grid, .grid.two { grid-template-columns:1fr; } .flow { grid-template-columns:1fr; } .step:not(:last-child)::after { content:"↓"; right:auto; left:50%; top:auto; bottom:-21px; } .hero { padding:45px 0 55px; } }
+      :root { --ink:#172033; --muted:#5d6980; --paper:#f6f8fc; --card:#fff; --line:#dfe5ef; --blue:#355bd8; --navy:#172747; --teal:#087f7c; --purple:#7744c8; }
+      * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      a { color:var(--blue); font-weight:700; } .wrap { width:min(1160px,calc(100% - 40px)); margin:auto; } header { background:radial-gradient(circle at 82% 8%,#5878e4 0,transparent 32%),linear-gradient(130deg,#15203c,#263f87); color:#fff; }
+      nav { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:22px 0; } nav a { color:#fff; text-decoration:none; } .brand { font-weight:850; } .navlink { border:1px solid #7e96d9; padding:8px 13px; border-radius:10px; font-size:.9rem; }
+      .hero { max-width:900px; padding:66px 0 82px; } .eyebrow { display:inline-block; padding:5px 10px; border:1px solid #8198df; border-radius:999px; color:#dce5ff; font-size:.8rem; font-weight:800; letter-spacing:.05em; } h1 { margin:18px 0; font-size:clamp(2.5rem,6vw,5rem); line-height:1.02; letter-spacing:-.06em; } h2 { margin:0 0 13px; font-size:clamp(1.65rem,3vw,2.45rem); line-height:1.15; letter-spacing:-.04em; } h3 { margin:0 0 8px; font-size:1.1rem; } .lead { max-width:760px; color:#dbe4ff; font-size:1.19rem; } .button { display:inline-block; margin:12px 10px 0 0; padding:11px 16px; border-radius:10px; background:#fff; color:#203568; text-decoration:none; font-weight:800; }
+      main { padding:70px 0; } section { margin:0 0 75px; } .intro { color:var(--muted); max-width:800px; margin-top:0; } .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; } .grid.two { grid-template-columns:repeat(2,1fr); } .card { padding:22px; background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 8px 24px rgb(25 42 78 / 4%); } .role { border-top:4px solid var(--blue); } .role.critic { border-top-color:var(--teal); } .role.planner { border-top-color:var(--purple); } .number { display:grid; place-items:center; width:29px; height:29px; margin-bottom:12px; border-radius:50%; background:#eaf0ff; color:#29499c; font-size:.85rem; font-weight:850; }
+      .flow { display:grid; grid-template-columns:repeat(6,1fr); gap:11px; margin-top:26px; } .flow div { position:relative; padding:15px 11px; border:1px solid var(--line); background:#fff; border-radius:13px; text-align:center; font-size:.9rem; font-weight:800; } .flow small { display:block; color:var(--muted); font-weight:500; line-height:1.3; margin-top:4px; } .flow div:not(:last-child):after { content:"→"; position:absolute; z-index:2; right:-18px; top:31%; color:#8b98b1; font-size:1.25rem; }
+      .table { overflow-x:auto; background:#fff; border:1px solid var(--line); border-radius:15px; } table { width:100%; min-width:690px; border-collapse:collapse; } th,td { padding:14px 16px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); } th { background:#f0f4fa; font-size:.85rem; letter-spacing:.03em; } tr:last-child td { border:0; } code { padding:2px 5px; border-radius:5px; background:#edf1f8; color:#293956; font-size:.9em; } .note { border-radius:18px; padding:28px; background:var(--navy); color:#e8edff; } .note h2 { color:#fff; } .note p { color:#d1dbf8; } .note code { background:#31456f; color:#fff; } .muted { color:var(--muted); } ul { padding-left:20px; } li { margin:7px 0; } footer { padding:35px 0 55px; border-top:1px solid var(--line); color:var(--muted); }
+      @media(max-width:850px) { .grid,.grid.two,.flow { grid-template-columns:1fr; } .flow div:not(:last-child):after { content:"↓"; top:auto; right:auto; bottom:-23px; left:50%; } .hero { padding:46px 0 58px; } }
     </style>
   </head>
   <body>
     <header>
       <div class="wrap">
-        <nav>
-          <a class="brand" href="#top">AI Research &amp; Task Assistant</a>
-          <a class="repo" href="https://github.com/sumit1523/ai-research-task-assistant">View repository ↗</a>
-        </nav>
-        <div class="hero" id="top">
-          <span class="tag">LANGCHAIN · LANGGRAPH · LANGSMITH</span>
-          <h1>Research clearly.<br />Plan realistically.</h1>
-          <p class="lead">A beginner-friendly AI app that turns trusted notes, webpages, and PDFs into a grounded research summary and a task plan you can actually complete.</p>
-          <div class="buttons">
-            <a class="button" href="https://github.com/sumit1523/ai-research-task-assistant">Explore the code</a>
-            <a class="button secondary" href="#how-it-works">How it works</a>
-          </div>
-        </div>
+        <nav><a class="brand" href="#top">AI Research &amp; Task Assistant</a><a class="navlink" href="https://github.com/sumit1523/ai-research-task-assistant">GitHub repository ↗</a></nav>
+        <div class="hero" id="top"><span class="eyebrow">MULTI-AGENT AI WORKFLOW</span><h1>One question.<br />Three AI roles.<br />A usable plan.</h1><p class="lead">A beginner-friendly research app where a Researcher finds the useful context, a Critic checks the work, and a Planner turns reviewed findings into tasks you can track.</p><a class="button" href="https://github.com/sumit1523/ai-research-task-assistant">Explore the source code</a><a class="button" href="#architecture">See the architecture</a></div>
       </div>
     </header>
-
     <main class="wrap">
-      <section>
-        <h2>What the app does</h2>
-        <p class="muted">Instead of being a generic chat box, the assistant follows a visible, stateful workflow and keeps useful work local.</p>
-        <div class="grid">
-          <article class="card"><div class="number">1</div><h3>Bring trusted context</h3><p>Paste notes, add public webpage URLs, or upload a PDF, text, or Markdown file.</p></article>
-          <article class="card"><div class="number">2</div><h3>Get a grounded answer</h3><p>The assistant prepares source text, produces a concise summary, and labels the inputs it used.</p></article>
-          <article class="card"><div class="number">3</div><h3>Take action</h3><p>Receive timed tasks, check them off, see progress, and ask the agent to revise the plan.</p></article>
-        </div>
-      </section>
+      <section><h2>What users can do</h2><p class="intro">Enter a question, then optionally add trusted notes, public webpages, or PDF/text/Markdown files. The app returns a research summary, a critic review, a timed action plan, and persistent progress checkboxes. A user can then ask for a realistic revision such as “I only have 30 minutes a day.”</p><div class="grid"><article class="card"><div class="number">1</div><h3>Add a question and sources</h3><p>The streamlined input area accepts one goal plus optional notes, URLs, and files. Sources are labelled before they enter the workflow.</p></article><article class="card"><div class="number">2</div><h3>Review the AI team’s work</h3><p>Tabs separate the final answer, the Researcher and Critic handoff, and the plan’s progress/source view.</p></article><article class="card"><div class="number">3</div><h3>Act and adapt</h3><p>Numbered tasks become persistent checkboxes. Feedback triggers the Planner to generate a replacement plan.</p></article></div></section>
 
-      <section id="how-it-works">
-        <h2>How one research request flows through the app</h2>
-        <div class="flow">
-          <div class="step flow-card">Question<span>Goal, topic, or problem</span></div>
-          <div class="step flow-card">Sources<span>Notes, URL, PDF, TXT, MD</span></div>
-          <div class="step flow-card">LangChain<span>Split context + prompt model</span></div>
-          <div class="step flow-card">LangGraph agent<span>Route, research, or revise</span></div>
-          <div class="step flow-card">Saved plan<span>SQLite tasks and progress</span></div>
-        </div>
-      </section>
+      <section id="architecture"><h2>End-to-end architecture</h2><div class="flow"><div>User input<small>Question + optional sources</small></div><div>Source loader<small>URL, PDF, TXT, MD, notes</small></div><div>Coordinator<small>LangGraph routes state</small></div><div>Researcher<small>Creates research brief</small></div><div>Critic<small>Checks gaps and claims</small></div><div>Planner<small>Summary + task plan + SQLite</small></div></div></section>
 
-      <section>
-        <h2>Detailed request lifecycle</h2>
-        <div class="grid two">
-          <article class="card"><h3>1. Validate the input</h3><p>The interface requires a research question. It accepts optional pasted notes, public web URLs, and multiple uploaded files. Empty questions are stopped before any model call.</p></article>
-          <article class="card"><h3>2. Ingest and label sources</h3><p>Each source becomes a pair of name and text. The app combines them as <code>[Source: name]</code> blocks so the model can identify where its context came from.</p></article>
-          <article class="card"><h3>3. Build graph state</h3><p>The initial state contains the question and combined source text. A revision run instead carries the original question, previous summary, previous task plan, and the user’s requested change.</p></article>
-          <article class="card"><h3>4. Route the agent</h3><p>The graph begins at <code>START</code> and always runs <code>decide</code>. It then follows one conditional edge: clarification, research, or revision. Each path ends cleanly at <code>END</code>.</p></article>
-          <article class="card"><h3>5. Generate structured sections</h3><p>The model is asked to return a <code>SUMMARY</code> followed by a <code>TASK PLAN</code>. The app separates those headings into the two columns users see.</p></article>
-          <article class="card"><h3>6. Save and track action</h3><p>The result is saved as a session. Numbered plan lines become task records, which power the local progress checkboxes and completion bar.</p></article>
-        </div>
-      </section>
+      <section><h2>All AI agents used</h2><p class="intro">This is a genuine role-based multi-agent workflow. All three agent roles use the hosted Qwen model, but each has a separate prompt, responsibility, input, output, and handoff. The LangGraph Coordinator is deterministic workflow logic rather than a fourth LLM agent.</p><div class="grid"><article class="card role"><h3>🔎 Researcher Agent</h3><p><strong>Goal:</strong> turn prepared context into an evidence-aware research brief.</p><p><strong>Input:</strong> question and split source excerpts.</p><p><strong>Output:</strong> 3-6 key findings plus assumptions or information gaps. It is instructed to preserve <code>[Source: ...]</code> labels and never create the final task plan.</p></article><article class="card role critic"><h3>🛡️ Critic Agent</h3><p><strong>Goal:</strong> audit the Researcher’s brief before anyone plans from it.</p><p><strong>Input:</strong> question and research brief.</p><p><strong>Output:</strong> <code>APPROVED</code> or <code>NEEDS_REVIEW</code>, plus strengths, risks, unsupported claims, or missing information. It does not make the plan.</p></article><article class="card role planner"><h3>🗓️ Planner Agent</h3><p><strong>Goal:</strong> create practical next steps from reviewed research.</p><p><strong>Input:</strong> question, research brief, critic decision, and critique.</p><p><strong>Output:</strong> a 3-5 bullet summary and 4-7 numbered tasks with time estimates. It also owns the user-feedback revision path.</p></article></div></section>
 
-      <section>
-        <h2>Where each AI concept is used</h2>
-        <div class="grid two">
-          <article class="card"><h3>LangChain: the AI building blocks</h3><p><code>ChatPromptTemplate</code> defines the research and revision prompts. <code>RecursiveCharacterTextSplitter</code> breaks large source text into manageable chunks. <code>ChatGroq</code> calls the hosted Qwen model and returns the summary and timed plan.</p></article>
-          <article class="card"><h3>LangGraph: the agent workflow</h3><p>The graph keeps request state and decides the next step. A short question routes to <code>clarify</code>; a normal request routes through <code>prepare_context</code> and <code>research_and_plan</code>; feedback routes to <code>revise</code>.</p></article>
-          <article class="card"><h3>LangSmith: observability and evaluation</h3><p>When <code>LANGSMITH_TRACING=true</code> and a valid key are configured, LangSmith records every graph run, model call, prompt, latency, output, and error. The included evaluation dataset tests whether expected concepts appear in generated results.</p></article>
-          <article class="card"><h3>Human-in-the-loop agent</h3><p>The user is always in control. They can adjust the plan with a request such as “I have only 30 minutes a day.” The graph enters the revision path and produces a new, more realistic plan.</p></article>
-        </div>
-      </section>
+      <section><h2>How the agents collaborate</h2><div class="grid two"><article class="card"><h3>Normal research path</h3><p><code>START → decide → prepare_context → researcher → critic → planner → END</code></p><p>The Planner receives the critic’s decision even when it is approved. If the Critic identifies uncertainty, the Planner must be cautious or include a research task instead of inventing a fact.</p></article><article class="card"><h3>Clarification and revision paths</h3><p>A question with fewer than four words routes to <code>clarify</code>, which asks for a goal, time, level, or desired result. Existing plan feedback routes directly to <code>revise</code>, where the Planner receives the prior summary, plan, and user constraint.</p></article></div></section>
 
-      <section>
-        <h2>The AI agent in this project</h2>
-        <p class="muted"><strong>Current architecture: one AI agent, not a multi-agent system.</strong> The agent is not just a single chat prompt: it uses state, chooses a workflow path, works with source context, and changes its plan after human feedback. The LangGraph nodes below are steps performed by the same agent, not independent agents.</p>
-        <div class="grid">
-          <article class="card"><div class="number">1</div><h3>It decides the next step</h3><p>The LangGraph <code>decide</code> node inspects the current state. Very short or vague questions go to a clarification response; normal questions go to research; feedback on an existing plan goes to revision.</p></article>
-          <article class="card"><div class="number">2</div><h3>It uses tools and context</h3><p>The agent works with loaded webpage text, uploaded PDFs, notes, a text splitter, prompt templates, and the hosted Qwen model. These tools help it create a grounded answer instead of answering from a blank chat window.</p></article>
-          <article class="card"><div class="number">3</div><h3>It keeps a useful state</h3><p>State holds the question, prepared context, summary, task plan, and revision request. This lets the agent revise the same plan rather than starting again when the user says their available time has changed.</p></article>
-        </div>
-        <div class="card" style="margin-top:18px"><h3>All agent components in the current code</h3><p><strong>One Research &amp; Task Agent</strong> is compiled as <code>research_agent</code>. Its workflow steps are <code>decide</code>, <code>clarify</code>, <code>prepare_context</code>, <code>research_and_plan</code>, and <code>revise</code>. The <code>ChatGroq</code> Qwen model is the agent’s language model, not a second agent. The URL/PDF loader, SQLite storage, and LangSmith tracing are tools and observability components, not agents.</p></div>
-      </section>
+      <section><h2>LangGraph state: what moves between agents</h2><div class="table"><table><thead><tr><th>State field</th><th>Purpose</th><th>Producer and consumer</th></tr></thead><tbody><tr><td><code>question</code></td><td>The user’s research goal.</td><td>Created by UI; used by all agents.</td></tr><tr><td><code>source_notes</code></td><td>Combined labelled input text.</td><td>Created by UI; consumed by context preparation.</td></tr><tr><td><code>context</code></td><td>Up to six overlapping source excerpts.</td><td>Created by <code>prepare_context</code>; consumed by Researcher.</td></tr><tr><td><code>research_brief</code></td><td>Evidence-aware findings and gaps.</td><td>Created by Researcher; consumed by Critic and Planner.</td></tr><tr><td><code>critique_decision</code> and <code>critique</code></td><td>Quality verdict and feedback.</td><td>Created by Critic; consumed by Planner and shown to user.</td></tr><tr><td><code>summary</code> and <code>tasks</code></td><td>Final user-facing plan.</td><td>Created by Planner; saved to SQLite and reused in revisions.</td></tr><tr><td><code>revision_request</code></td><td>Human constraint or desired change.</td><td>Created by UI; causes the route to the Planner’s revision node.</td></tr></tbody></table></div></section>
 
-      <section>
-        <h2>Agent state and decision contract</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>State field</th><th>Why it exists</th><th>Where it is used</th></tr></thead>
-            <tbody>
-              <tr><td><code>question</code></td><td>The research goal supplied by the user.</td><td>Used by every model prompt and by the decision node.</td></tr>
-              <tr><td><code>source_notes</code></td><td>Combined labelled text from notes, URLs, and uploaded files.</td><td>Split in <code>prepare_context</code> before research generation.</td></tr>
-              <tr><td><code>context</code></td><td>Focused source excerpts for the LLM.</td><td>Passed to the research prompt with the user question.</td></tr>
-              <tr><td><code>route</code></td><td>The current decision: clarification, research, or revision.</td><td>Read by the LangGraph conditional edge function.</td></tr>
-              <tr><td><code>summary</code> and <code>tasks</code></td><td>The last useful output of the agent.</td><td>Displayed in Streamlit, saved to SQLite, and reused for revisions.</td></tr>
-              <tr><td><code>revision_request</code></td><td>User feedback such as time, difficulty, or priority constraints.</td><td>Causes the agent to route to the human-in-the-loop <code>revise</code> node.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <section><h2>Where LangChain is used</h2><div class="grid two"><article class="card"><h3>Source preparation</h3><p><code>RecursiveCharacterTextSplitter</code> creates 700-character chunks with 100-character overlap. This is a lightweight RAG-style context step. The current MVP uses the first six chunks; true vector retrieval is a planned improvement.</p></article><article class="card"><h3>Prompts and model calls</h3><p>Each role uses its own <code>ChatPromptTemplate</code>. <code>ChatGroq</code> calls the cloud-hosted <code>qwen/qwen3.6-27b</code> model. Temperature is <code>0.2</code>, output is capped at 700 tokens, and internal reasoning is disabled/hidden for clean user-facing output.</p></article></div></section>
 
-      <section>
-        <h2>Source ingestion and grounding</h2>
-        <div class="grid two">
-          <article class="card"><h3>Web pages</h3><p>The app fetches public HTTP(S) links, removes navigation, scripts, and styling noise, then retains readable text. It rejects local URLs.</p></article>
-          <article class="card"><h3>Uploaded files</h3><p>PDF, TXT, and Markdown files are read in memory; they are not copied to a cloud storage bucket. AES-PDF support is included, and password-protected files return a friendly message.</p></article>
-          <article class="card"><h3>Context preparation</h3><p>Source text is split into overlapping chunks before reaching the model. This is a lightweight RAG-style foundation that keeps the prompt focused and is easy to understand.</p></article>
-          <article class="card"><h3>Grounded output</h3><p>The research prompt asks the model to rely on provided context for factual claims and to label no-source answers as general guidance.</p></article>
-        </div>
-      </section>
+      <section><h2>Source ingestion and grounding</h2><div class="grid two"><article class="card"><h3>Web pages</h3><p>Public HTTP(S) URLs are fetched with a timeout. Local URLs are rejected. Navigation, scripts, headers, footers, and styles are stripped so the workflow receives readable page text rather than website chrome.</p></article><article class="card"><h3>Files</h3><p>PDF, TXT, and Markdown uploads are read in memory and capped at 20,000 characters. PDF extraction uses <code>pypdf[crypto]</code>; protected files receive a friendly upload-an-unlocked-copy message.</p></article><article class="card"><h3>Labelling</h3><p>Every input is wrapped as <code>[Source: name]</code>. The Researcher is prompted to retain these labels for factual claims, making the research brief easier to audit.</p></article><article class="card"><h3>Grounding guardrail</h3><p>With no source text, the Researcher must identify findings as general guidance. This reduces overconfidence but is not a replacement for human verification.</p></article></div></section>
 
-      <section>
-        <h2>Model and prompt behavior</h2>
-        <div class="grid two">
-          <article class="card"><h3>Hosted free-tier model</h3><p>The app calls Groq’s hosted <code>qwen/qwen3.6-27b</code> through the LangChain <code>ChatGroq</code> integration. No multi-gigabyte model is installed locally. A Groq API key is required, and the account’s free-tier limits apply.</p></article>
-          <article class="card"><h3>Output settings</h3><p>The model uses a low temperature of <code>0.2</code> for more consistent plans and a maximum of <code>700</code> output tokens. Reasoning is disabled and hidden, so users receive a direct answer rather than internal reasoning text.</p></article>
-          <article class="card"><h3>Research prompt guardrail</h3><p>When sources exist, the prompt says to use them for factual claims. Without sources, it instructs the model to label its answer as general guidance. This is a practical grounding guardrail, not a guarantee of factual accuracy.</p></article>
-          <article class="card"><h3>Revision prompt</h3><p>The revision node receives the current summary and task plan with the feedback. It creates a replacement plan; it does not silently mutate existing tasks or take actions outside the app.</p></article>
-        </div>
-      </section>
+      <section><h2>Modern Streamlit user experience</h2><div class="grid"><article class="card"><h3>Guided first screen</h3><p>A visual team introduction and one bordered input workspace replace a long technical form. Optional evidence inputs are clearly separated from the required question.</p></article><article class="card"><h3>Visible collaboration</h3><p>A status panel explains the Researcher, Critic, and Planner handoff. The collaboration tab exposes the actual research brief and critic review rather than hiding them behind one answer.</p></article><article class="card"><h3>Focused workspace</h3><p>Tabs separate final output, agent handoff details, and progress. The sidebar gives a compact team guide, LangSmith status, and the five most recent locally saved projects.</p></article></div></section>
 
-      <section>
-        <h2>Data, privacy, and safety</h2>
-        <div class="grid two">
-          <article class="card"><h3>Local history</h3><p>Research sessions and task completion live in the local <code>research_tasks.db</code> SQLite database. The file is excluded from Git.</p></article>
-          <article class="card"><h3>Secret protection</h3><p>API keys belong in <code>.env</code>. That file is ignored by Git and never included in the repository or this public site.</p></article>
-          <article class="card"><h3>Explicit user actions</h3><p>The agent recommends and revises; it does not send emails, make purchases, or alter external accounts.</p></article>
-          <article class="card"><h3>Transparent errors</h3><p>URL, file, PDF encryption, and cloud-model failures are presented separately so users see an actionable explanation rather than a vague failure.</p></article>
-        </div>
-      </section>
+      <section><h2>Data, privacy, and safety</h2><div class="grid two"><article class="card"><h3>SQLite persistence</h3><p><code>research_tasks.db</code> is local. The <code>sessions</code> table stores question, summary, task-plan text, and timestamp. The <code>task_items</code> table stores individual task text, completion status, and its session relationship.</p></article><article class="card"><h3>Secrets</h3><p><code>.env</code> stores keys locally and is excluded by <code>.gitignore</code>. The public GitHub repository and Pages site never include the database, virtual environment, or secrets.</p></article><article class="card"><h3>User control</h3><p>The app does not email, purchase, post, or change external accounts. It recommends, plans, and revises only after the user chooses to run a session or request a revision.</p></article><article class="card"><h3>Clear errors</h3><p>Source-loading errors and cloud-model errors are handled separately. Users receive actionable file, URL, encryption, or provider information instead of a generic failure.</p></article></div></section>
 
-      <section>
-        <div class="callout">
-          <h2>How the project is tested</h2>
-          <p><strong>Evaluation tests:</strong> <code>evaluate.py</code> sends stable example questions through the agent and checks that a summary, task plan, and expected source concept are present.</p>
-          <p><strong>Workflow tests:</strong> the app has been exercised through initial research, the LangGraph revision branch, persistent task completion, PDF handling, and Streamlit UI tests.</p>
-          <p><strong>LangSmith test:</strong> with a valid LangSmith API key, send one request and inspect the <code>ai-research-task-assistant</code> project to view the nested graph and model trace.</p>
-        </div>
-      </section>
+      <section><div class="note"><h2>LangSmith observability and evaluation</h2><p><strong>Tracing:</strong> with a valid <code>LANGSMITH_API_KEY</code>, <code>LANGSMITH_TRACING=true</code>, and <code>LANGSMITH_PROJECT</code>, LangSmith records the complete nested execution: Coordinator route, each agent call, prompts, model output, latency, and errors.</p><p><strong>Offline evaluation:</strong> <code>evaluation_examples.json</code> contains stable example questions. <code>evaluate.py</code> runs them through the graph and checks for a summary, task plan, and an expected concept. With tracing configured, those evaluation runs appear in the same LangSmith project.</p><p><strong>Important:</strong> LangSmith is optional for the app to function. It requires a valid user-owned key; no tracing project exists until the first traced run succeeds.</p></div></section>
 
-      <section>
-        <h2>Testing and verification matrix</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Area</th><th>What is checked</th><th>Evidence of success</th></tr></thead>
-            <tbody>
-              <tr><td>LangChain pipeline</td><td>Prompt, context splitting, Groq call, and response parsing.</td><td>A non-empty summary and task plan are generated.</td></tr>
-              <tr><td>LangGraph workflow</td><td>Research and revision graph paths.</td><td>Initial research and feedback-driven revision calls both complete.</td></tr>
-              <tr><td>Evaluation dataset</td><td>Two stable example questions in <code>evaluation_examples.json</code>.</td><td><code>evaluate.py</code> checks required sections and expected source concepts.</td></tr>
-              <tr><td>Streamlit interface</td><td>Question submission, cloud response, and task checkboxes.</td><td>The UI test completes with no displayed error or exception.</td></tr>
-              <tr><td>SQLite persistence</td><td>Generated numbered items become task records and completion status updates.</td><td>Saved task items can be retrieved and marked complete.</td></tr>
-              <tr><td>PDF support</td><td>PDF text extraction and AES crypto dependency availability.</td><td>Readable PDFs load; protected files return a clear user message.</td></tr>
-              <tr><td>LangSmith observability</td><td>Tracing is optional and needs a valid LangSmith key.</td><td>A successful run appears under the configured LangSmith project with nested graph and LLM spans.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <section><h2>Testing matrix</h2><div class="table"><table><thead><tr><th>Test area</th><th>What is verified</th><th>Success condition</th></tr></thead><tbody><tr><td>Multi-agent graph</td><td>Researcher, Critic, Planner handoffs.</td><td>Brief, critique, decision, summary, and tasks are all present.</td></tr><tr><td>Revision path</td><td>Human feedback routes to Planner revision.</td><td>A new summary and task plan are returned.</td></tr><tr><td>Evaluation suite</td><td>Stable research examples.</td><td>Each example contains required sections and source concepts.</td></tr><tr><td>Streamlit UI</td><td>Input, agent execution, task display, and checkboxes.</td><td>No interface exceptions or visible errors.</td></tr><tr><td>SQLite tasks</td><td>Plan parsing and completion state.</td><td>Numbered tasks persist and completion updates reload.</td></tr><tr><td>PDF support</td><td>Text extraction and AES dependency.</td><td>Readable PDFs load; protected PDFs show a helpful message.</td></tr></tbody></table></div></section>
 
-      <section>
-        <h2>Configuration, deployment, and limits</h2>
-        <div class="grid two">
-          <article class="card"><h3>Required configuration</h3><p><code>GROQ_API_KEY</code> authenticates hosted model calls. The optional <code>GROQ_MODEL</code> selects the model. Keys are loaded from <code>.env</code> and the example file documents the variable names without including secrets.</p></article>
-          <article class="card"><h3>Optional LangSmith configuration</h3><p>Set <code>LANGSMITH_TRACING=true</code>, <code>LANGSMITH_API_KEY</code>, and a project name to observe the same LangChain and LangGraph calls in LangSmith. A key must be valid for the configured LangSmith region.</p></article>
-          <article class="card"><h3>GitHub Pages guide</h3><p>This documentation site is static HTML in <code>docs/</code>, published from the <code>main</code> branch’s <code>/docs</code> folder. It needs no JavaScript build process and links back to the public repository.</p></article>
-          <article class="card"><h3>Current limitations</h3><p>The context stage takes the first six chunks rather than semantic vector retrieval; generated tasks have no due dates; remote pages can change after they are loaded; and a cloud LLM can still make mistakes. These are intentional MVP tradeoffs to keep the code understandable.</p></article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Next development steps</h2>
-        <div class="grid">
-          <article class="card"><h3>True RAG retrieval</h3><p>Add embeddings and a local vector store so the app retrieves the most relevant chunks rather than the first six source chunks.</p></article>
-          <article class="card"><h3>Quality controls</h3><p>Add source-level citations, a critic pass for unsupported claims, and more varied LangSmith evaluation examples.</p></article>
-          <article class="card"><h3>Planning features</h3><p>Add task due dates, priority, search across saved sessions, and optional calendar integration after explicit user approval.</p></article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Project map</h2>
-        <div class="grid two">
-          <article class="card"><h3><code>app.py</code></h3><p>Streamlit interface: source inputs, answer display, progress checkboxes, and revision controls.</p></article>
-          <article class="card"><h3><code>assistant_graph.py</code></h3><p>The LangGraph state, routes, LangChain prompts, context preparation, and Groq model integration.</p></article>
-          <article class="card"><h3><code>source_loader.py</code></h3><p>Safe public URL loading and in-memory PDF/text/Markdown extraction.</p></article>
-          <article class="card"><h3><code>storage.py</code></h3><p>SQLite schema and helpers for sessions, tasks, and completion status.</p></article>
-          <article class="card"><h3><code>evaluate.py</code></h3><p>A small repeatable quality check using <code>evaluation_examples.json</code>.</p></article>
-          <article class="card"><h3><code>README.md</code></h3><p>Local setup instructions, environment configuration, and feature overview.</p></article>
-        </div>
-      </section>
+      <section><h2>Configuration, deployment, and project map</h2><div class="grid two"><article class="card"><h3>Required configuration</h3><p><code>GROQ_API_KEY</code> enables hosted Qwen calls. <code>GROQ_MODEL</code> can override the default model. No local LLM download is required, but Groq free-tier rate and token limits apply.</p></article><article class="card"><h3>GitHub Pages</h3><p>This guide is plain static HTML in <code>docs/</code>. GitHub Pages publishes that folder from the <code>main</code> branch, so documentation changes are versioned and deployed with the code.</p></article><article class="card"><h3>Key files</h3><p><code>app.py</code> is the UI; <code>assistant_graph.py</code> is the multi-agent graph; <code>source_loader.py</code> handles input; <code>storage.py</code> owns SQLite; <code>evaluate.py</code> runs checks.</p></article><article class="card"><h3>Known limits and next steps</h3><p>Current retrieval uses first-chunk context, citations are labels rather than claim-level links, and critic feedback does not yet trigger an automatic re-research loop. Next steps are embeddings/vector retrieval, source citations, richer task metadata, and a Critic-to-Researcher retry branch.</p></article></div></section>
     </main>
-    <footer><div class="wrap">Built as a practical learning project for agentic AI workflows. <a href="https://github.com/sumit1523/ai-research-task-assistant">Open the GitHub repository ↗</a></div></footer>
+    <footer><div class="wrap">Built as a transparent learning project for multi-agent AI workflows. <a href="https://github.com/sumit1523/ai-research-task-assistant">View repository ↗</a></div></footer>
   </body>
 </html>
